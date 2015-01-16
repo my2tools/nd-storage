@@ -1,6 +1,6 @@
 {
   "name": "nd-storage",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "基于浏览器的缓存策略",
   "keywords": [],
   "homepage": "https://github.com/ndfront/nd-storage",

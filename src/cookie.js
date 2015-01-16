@@ -31,88 +31,58 @@ module.exports = (function() {
 
   /**
    * 获取存储在cookie中的内容
-   * @param config 存储信息
-   * @config key cookie-key
-   * @config decode 是否进行decode处理
+   * @param key cookie-key
    * @return {String}
    * @private
    */
-  var _get = function(config) {
-    var value = null;
+  var _get = function(key) {
+    var value, reg, m;
 
-    if (_isValidKey(config.key)) {
-      var reg = new RegExp('(^| )' + config.key + '=([^;\/]*)([^;\x24]*)(;|\x24)'),
-        result = reg.exec(document.cookie);
+    if (_isValidKey(key)) {
+      reg = new RegExp('(^| )' + key + '=([^;\/]*)([^;\x24]*)(;|\x24)');
+      m = reg.exec(document.cookie);
 
-      if (result) {
-        value = result[2] || null;
+      if (m) {
+        value = m[2];
       }
     }
 
-    if (('string' === typeof value) && config.decode !== false) {
-      return decodeURIComponent(value);
-    }
-
-    return null;
+    return value ? decodeURIComponent(value) : null;
   };
 
   /**
    * 存储cookie
    *
-   * @param options {
-   *     key : "",
-   *     value : "",
-   *     path : "",       // 默认存储在当前域名的根目录，如果要设置到每个页面的单独目录，请设置为："./"
-   *     domain : "",
-   *     expires : Date,
-   *     secure : "secure",
-   *     encode : true
-   * }
+   * @param key cookie-key
+   * @param value cookie-value
    * @private
    */
-  var _set = function(config) {
-    if (!_isValidKey(config.key)) {
+  var _set = function(key, value) {
+    if (!_isValidKey(key)) {
       return;
     }
 
-    config = config || {};
-
-    if (config.encode !== false) {
-      config.value = encodeURIComponent(config.value);
+    if (typeof value === 'string') {
+      value = encodeURIComponent(value);
     }
 
-    // 计算cookie过期时间
-    var expires = config.expires;
-    if (!(expires instanceof Date)) {
-      expires = new Date();
-      if ('number' === typeof config.expires) {
-        expires.setTime(expires.getTime() + config.expires);
-      } else {
-        // 在没有设置过期时间的情况下，默认：30day
-        expires.setTime(expires.getTime() + 86400000 * 30);
-      }
-    }
+    var maxage = (value === null) ? -1 : 86400000 * 30;
 
-    document.cookie = config.key + '=' + config.value +
-      (config.path ? '; path=' + (config.path === './' ? '' : config.path) : '/') +
-      (expires ? '; expires=' + expires.toGMTString() : '') +
-      (config.domain ? '; domain=' + config.domain : '') +
-      (config.secure ? '; secure' : '');
+    document.cookie = key + '=' + value +
+      ('; expires=' + new Date(new Date().getTime() + maxage).toUTCString()) +
+      (location.protocol === 'https' ? '; secure' : '');
   };
 
   /**
    * 移除掉某一个存储
-   * @param config
-   * @config key
+   * @param key
    * @private
    */
-  var _remove = function(config) {
-    var obj = _get(config);
+  var _remove = function(key) {
+    var value = _get(key);
 
-    if (obj !== null) {
-      config.value = null;
-      config.expires = -1;
-      _set(config);
+    if (value !== null) {
+      _set(key, null);
     }
   };
 
@@ -120,7 +90,7 @@ module.exports = (function() {
    * 清除掉所有
    * @private
    */
-  var _clearAll = function() {
+  var _clear = function() {
     document.cookie = '';
   };
 
@@ -128,18 +98,19 @@ module.exports = (function() {
    * 获取所有的存储key
    * @private
    */
-  var _getAllKeys = function() {
+  var _keys = function() {
     var keys = [];
-    var reg = /(^| )([^=; ]+)=([^;]*)(;|\x24)/igm;
-    var localCookies = (document.cookie || '').match(reg);
 
-    if (localCookies) {
-      var items;
+    if (!document.cookie) {
+      return keys;
+    }
 
-      for (var i = 0, len = localCookies.length; i < len; i++) {
-        items = reg.exec(localCookies[i]);
-        keys.push(items[2]); //第二项是key，第三项是value
-      }
+    var m,
+      regex = /(?:^| ) ?(.+?)=.+?(?:$|;)/gm,
+      cookie = document.cookie;
+
+    while((m = regex.exec(cookie))) {
+      keys.push(m[1]);
     }
 
     return keys;
@@ -149,8 +120,8 @@ module.exports = (function() {
     get: _get,
     set: _set,
     remove: _remove,
-    clearAll: _clearAll,
-    getAllKeys: _getAllKeys
+    clear: _clear,
+    keys: _keys
   };
 
 })();

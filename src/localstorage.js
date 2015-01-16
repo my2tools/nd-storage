@@ -23,89 +23,42 @@ module.exports = (function() {
   /**
    * 将数据进行本地存储（只能存储字符串信息）
    */
-  function _set(storageInfo) {
+  function _set(key, value) {
     //待存储的数据
-    var storageInfo = storageInfo || {};
-
-    localStorage.setItem(storageInfo.key, storageInfo.value);
-
-    // 如果指定了生命周期，则单独作为一个key来存储
-    if (storageInfo.expires) {
-      var expires;
-
-      //如果设置项里的expires为数字，则表示数据的能存活的毫秒数
-      if ('number' === typeof storageInfo.expires) {
-        expires = new Date();
-        expires.setTime(expires.getTime() + storageInfo.expires);
-      }
-
-      localStorage.setItem(storageInfo.key + '.expires', expires);
-    }
+    localStorage.setItem(key, value);
   }
 
   /**
    * 提取本地存储的数据
    */
-  function _get(config) {
+  function _get(key) {
     //结果
-    var result = null;
-
-    if (typeof config === 'string') {
-      config = {
-        key: config
-      };
-    }
-
-    result = localStorage.getItem(config.key);
-
-    //过期时间判断，如果过期了，则移除该项
-    if (result) {
-      var expires = localStorage.getItem(config.key + '.expires');
-
-      result = {
-        value: result,
-        expires: expires ? new Date(expires) : null
-      };
-
-      if (result && result.expires && result.expires < new Date()) {
-        result = null;
-
-        localStorage.removeItem(config.key);
-        localStorage.removeItem(config.key + '.expires');
-      }
-    }
-
-    return result ? result.value : null;
+    return localStorage.getItem(key);
   }
 
   /**
    * 移除某一项本地存储的数据
    */
-  function _remove(config) {
-    localStorage.removeItem(config.key);
-    localStorage.removeItem(config.key + '.expires');
+  function _remove(key) {
+    localStorage.removeItem(key);
   }
 
   /**
    * 清除所有本地存储的数据
    */
-  function _clearAll() {
+  function _clear() {
     localStorage.clear();
   }
 
   /**
    * 获取所有的本地存储数据对应的key
    */
-  function _getAllKeys() {
+  function _keys() {
     var result = [],
-      key;
+      key, i, n;
 
-    for (var i = 0, len = localStorage.length; i < len; i++) {
+    for (i = 0, n = localStorage.length; i < n; i++) {
       key = localStorage.key(i);
-
-      if (!/.+\.expires$/.test(key)) {
-        result.push(key);
-      }
     }
 
     return result;
@@ -115,8 +68,8 @@ module.exports = (function() {
     get: _get,
     set: _set,
     remove: _remove,
-    clearAll: _clearAll,
-    getAllKeys: _getAllKeys
+    clear: _clear,
+    keys: _keys
   };
 
 })();

@@ -14,11 +14,11 @@
  * 3、在以上两种都不支持的浏览器中，采用cookie进行存储
  *
  * @API
- * 1、Storage.set //设置本地存储
- * 2、Storage.get //获取本地存储
+ * 1、Storage.set    //设置本地存储
+ * 2、Storage.get    //获取本地存储
  * 3、Storage.remove //移除本地存储
- * 4、Storage.clearAll //清空所有本地存储
- * 5、Storage.getAllKeys //获取所有本地存储的key
+ * 4、Storage.clear  //清空所有本地存储
+ * 5、Storage.keys   //获取所有本地存储的key
  *
  * @homepage    http://www.baidufe.com/component/browser-storage/index.html
  * @author zhaoxianlie (xianliezhao@foxmail.com)
