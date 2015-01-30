@@ -25,7 +25,7 @@
  */
 
 module.exports = ('localStorage' in window) && (window.localStorage.getItem) ?
-  require('./src/localStorage.js') :
+  require('./src/localstorage.js') :
     /msie/.test(navigator.userAgent.toLowerCase()) ?
       require('./src/userdata.js') :
         require('./src/cookie.js');
