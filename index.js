@@ -1,31 +1,104 @@
 /**
- * @module: nd-storage
- * @author: crossjs <liwenfu@crossjs.com> - 2015-01-14 16:56:02
+ * @module Storage
+ * @author crossjs <liwenfu@crossjs.com>
+ * @create 2015-01-14 16:56:02
  */
 
 'use strict';
 
 /**
- * 全浏览器支持的本地存储方案：
- *
- * @detail
- * 1、支持HTML5的浏览器，采用原生localStorage进行存储
- * 2、IE7及其以下版本，采用UserData进行存储
- * 3、在以上两种都不支持的浏览器中，采用cookie进行存储
- *
- * @API
- * 1、Storage.set    //设置本地存储
- * 2、Storage.get    //获取本地存储
- * 3、Storage.remove //移除本地存储
- * 4、Storage.clear  //清空所有本地存储
- * 5、Storage.keys   //获取所有本地存储的key
- *
- * @homepage    http://www.baidufe.com/component/browser-storage/index.html
- * @author zhaoxianlie (xianliezhao@foxmail.com)
+ * @param {string} prefix  key 前缀
+ * @param {number} expire  默认过期秒数
  */
+function Storage(prefix, expire) {
+  this.prefix = prefix || '';
 
-module.exports = ('localStorage' in window) && (window.localStorage.getItem) ?
-  require('./src/localstorage.js') :
-    /msie/.test(navigator.userAgent.toLowerCase()) ?
-      require('./src/userdata.js') :
-        require('./src/cookie.js');
+  if (expire === -1) {
+    this.driver = window.sessionStorage;
+  } else {
+    this.driver = window.localStorage;
+    this.expire = expire || 0;
+  }
+}
+
+Storage.prototype = {
+
+  constructor: 'Storage',
+
+  _key: function(key) {
+    return this.prefix + key;
+  },
+
+  /**
+   * 获取所有的本地存储数据对应的 key
+   */
+  keys: function() {
+    var keys = Object.keys(this.driver);
+
+    if (this.prefix) {
+      var index = this.prefix.length;
+
+      return keys.map(function(key) {
+        return key.substring(index);
+      });
+    }
+
+    return keys;
+  },
+
+  /**
+   * 移除某一项本地存储的数据
+   */
+  remove: function(key) {
+    this.driver.removeItem(this._key(key));
+  },
+
+  /**
+   * 清除所有本地存储的数据
+   */
+  clear: function() {
+    this.driver.clear();
+  },
+
+  /**
+   * 将数据进行本地存储
+   */
+  set: function(key, value, expire) {
+    var data = {
+      value: value
+    };
+
+    if (typeof expire === 'undefined') {
+      expire = this.expire;
+    }
+
+    if (expire) {
+      data.expire = Date.now() + expire * 1000;
+    }
+
+    this.driver.setItem(this._key(key), JSON.stringify(data));
+  },
+
+  /**
+   * 提取本地存储的数据
+   */
+  get: function(key) {
+    var data = this.driver.getItem(this._key(key));
+
+    if (data) {
+      data = JSON.parse(data);
+
+      if (data.expire) {
+        if (data.expire < Date.now()) {
+          this.remove(key);
+          data = null;
+        }
+      }
+    }
+
+    return data && data.value;
+  }
+
+};
+
+module.exports = Storage;
