@@ -1,7 +1,6 @@
 /**
  * @module Storage
  * @author crossjs <liwenfu@crossjs.com>
- * @create 2015-01-14 16:56:02
  */
 
 'use strict';
@@ -23,7 +22,7 @@ function Storage(prefix, expire) {
 
 Storage.prototype = {
 
-  constructor: 'Storage',
+  constructor: Storage,
 
   _key: function(key) {
     return this.prefix + key;
