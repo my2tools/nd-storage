@@ -1,2 +1,3 @@
-coverage/
+.git
 node_modules/
+tests/
