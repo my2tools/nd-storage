@@ -1,12 +1,16 @@
 {
   "name": "nd-storage",
-  "version": "0.1.0",
+  "version": "3.0.0",
   "description": "基于浏览器的缓存策略",
   "keywords": [],
   "homepage": "https://github.com/ndfront/nd-storage",
   "author": {
     "name": "crossjs",
     "email": "liwenfu@crossjs.com"
+  },
+  "scripts": {
+    "test": "mocha --bail --timeout 200 --slow 99999 tests/**/*-spec.js",
+    "coverage": "node_modules/isparta/bin/isparta cover node_modules/mocha/bin/_mocha -- --bail --timeout 200 --slow 99999 -R dot tests/**/*-spec.js"
   },
   "repository": {
     "type": "git",
@@ -16,21 +20,11 @@
     "url": "https://github.com/ndfront/nd-storage/issues"
   },
   "licenses": "MIT",
+  "main": "index.js",
+  "dependencies": {},
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-exec": "^0.4.6",
-    "grunt-jsdoc": "^0.5.7",
-    "grunt-spm-server": "^0.1.2",
-    "load-grunt-tasks": "^0.6.0"
-  },
-  "spm": {
-    "main": "index.js",
-    "dependencies": {
-    },
-    "devDependencies": {
-      "expect.js": "0.3.1"
-    }
+    "expect.js": "^0.3.1",
+    "isparta": "^4.0.0",
+    "mocha": "^2.4.5"
   }
 }
