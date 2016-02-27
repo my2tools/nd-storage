@@ -1,0 +1,69 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "JSON": true
+  },
+  "rules": {
+    "no-bitwise": 0,
+    "camelcase": 2,
+    "curly": 2,
+    "eqeqeq": 2,
+    "no-unused-expressions": [
+      2,
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true
+      }
+    ],
+    "guard-for-in": 0,
+    "no-extend-native": 0,
+    "wrap-iife": [
+      2,
+      "any"
+    ],
+    "indent": [
+      2,
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "no-use-before-define": 2,
+    "max-depth": [
+      2,
+      3
+    ],
+    "max-params": [
+      2,
+      3
+    ],
+    "new-cap": [
+      2,
+      {
+        "properties": false
+      }
+    ],
+    "no-caller": 0,
+    "no-empty": 2,
+    "no-new": 0,
+    "no-plusplus": 0,
+    "quotes": [
+      2,
+      "single"
+    ],
+    "no-script-url": 2,
+    "no-shadow": 0,
+    "strict": [
+      2,
+      "global"
+    ],
+    "dot-notation": 0,
+    "no-undef": 2,
+    "no-unused-vars": 2,
+    "no-multi-str": 0
+  }
+}
